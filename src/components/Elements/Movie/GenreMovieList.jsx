@@ -2,7 +2,7 @@ import React from 'react'
 import GenresList from '../../../Constant/GenresList'
 import MovieList from './MovieList'
 
-function GenreMovieList() {
+const GenreMovieList = () => {
   return (
     <div>
         {GenresList.genere.map((item,index)=>index<=4&&(

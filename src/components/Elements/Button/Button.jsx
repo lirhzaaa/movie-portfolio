@@ -1,63 +1,18 @@
-import React from "react";
-import WithCalculate from "../../WithCalculate";
-
-const Button = (props) => {
-  console.log({ props });
+const Button = ({
+  children,
+  onClick,
+  className,
+  textColor = "text-black",
+  bg = "bg-white hover:bg-gray-200",
+}) => {
   return (
-    <section
-      style={{
-        textAlign: "center",
-        marginTop: "100px",
-      }}
+    <button
+      onClick={onClick}
+      className={`${bg} ${textColor} font-bold text-ms py-2 px-4 rounded mt-4 ${className} cursor-pointer transition duration-300`}
     >
-      <h1>Hasil : {props.nilai}</h1>
-      <div
-        style={{
-          display: "flex",
-          gap: "100px",
-          justifyContent: "center",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            marginBottom: "50px",
-          }}
-        >
-          <h2>X + {props.counter}</h2>
-          <button onClick={props.tambahClick}>Click Me For +</button>
-        </div>
-        <div>
-          <h2>X - {props.counter}</h2>
-          <button onClick={props.kurangClick}>Click Me For -</button>
-        </div>
-        <div>
-          <h2>X * {props.counter}</h2>
-          <button onClick={props.kaliClick}>Click Me For *</button>
-        </div>
-        <div>
-          <h2>X / {props.counter}</h2>
-          <button onClick={props.bagiClick}>Click Me For /</button>
-        </div>
-        <button
-          onClick={props.resetClick}
-          style={{
-            height: "30px",
-            alignSelf: "center",
-            backgroundColor: "red",
-            color: "white",
-            borderRadius: "5px",
-            width: "100px",
-            fontWeight: "bold",
-            fontSize: "15px",
-            border: "none",
-          }}
-        >
-          Reset
-        </button>
-      </div>
-    </section>
+      {children}
+    </button>
   );
 };
 
-export default WithCalculate(Button);
+export default Button;
