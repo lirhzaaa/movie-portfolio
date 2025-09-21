@@ -105,7 +105,7 @@ const Slider = () => {
         ref={elementRef}
       >
         {movieList.map((item, index) =>
-          console.log(item) || item.backdrop_path ? (
+          item.backdrop_path ? (
             <div
               key={index}
               className="relative min-w-full md:h-[650px] snap-start"
@@ -116,7 +116,7 @@ const Slider = () => {
                 alt=""
               />
               <div className="absolute inset-0 flex items-center justify-start text-white pl-25">
-                <div className="max-w-xl">
+                <div className="max-w-2xl">
                   <h2 className="text-3xl font-bold mb-2">
                     {item.title || item.name}
                   </h2>

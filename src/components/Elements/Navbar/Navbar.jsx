@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
-import Logo from "../../../assets/logo.png";
+import React, { useState, useEffect, useRef } from "react";
 import NavbarItems from "./NavbarItems";
 import { FaSearch } from "react-icons/fa";
+import GlobalApi from "../../../Services/GlobalApi";
 
 const Navbar = () => {
   const [toogle, setToogle] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const debounceRef = useRef(null);
 
   const menu = [
     { name: "Home" },
@@ -23,6 +26,26 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    if (searchQuery.trim()) {
+      debounceRef.current = setTimeout(() => {
+        GlobalApi.getSearchResults(searchQuery).then((res) => {
+          setSearchResults(res.data.results.slice(0, 5));
+        });
+      }, 500);
+    } else {
+      setSearchResults([]);
+    }
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [searchQuery]);
+
   return (
     <div
       className={`text-white flex items-center justify-between px-4 md:px-8 py-8 ${
@@ -32,11 +55,7 @@ const Navbar = () => {
       } fixed w-full z-[999]`}
     >
       <div className="flex items-center gap-4 md:gap-10 h-full">
-        <img
-          src={Logo}
-          alt="Logo Disney"
-          className="w-[60px] md:w-[100px] object-cover transition-all duration-300"
-        />
+        <span className="font-serif text-2xl">Lirhza Movie</span>
         <div className="hidden md:flex gap-8">
           {menu.map((item, index) => (
             <NavbarItems key={index} name={item.name} />
@@ -62,13 +81,35 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-5 h-full">
+      <div className="flex items-center gap-5 h-full relative">
         {showSearch && (
-          <input
-            type="text"
-            placeholder="Search..."
-            className="bg-gray-800 text-white rounded px-2 py-1 border border-gray-600 focus:outline-none focus:border-gray-500"
-          />
+          <>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-gray-800 text-white rounded px-2 py-1 border border-gray-600 focus:outline-none focus:border-gray-500"
+            />
+            {searchResults.length > 0 ? (
+              <div className="absolute top-full mt-2 bg-gray-800 border border-gray-600 rounded shadow-lg p-2 min-w-[300px] max-h-[400px] overflow-y-auto z-50 scrollbar-hide">
+                {searchResults.map((movie, index) => (
+                  <div key={index} className="flex items-center gap-3 p-2 hover:bg-gray-700 cursor-pointer">
+                    <img
+                      src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
+                      alt={movie.title}
+                      className="w-12 h-18 object-cover rounded"
+                    />
+                    <span className="text-white">{movie.title}</span>
+                  </div>
+                ))}
+              </div>
+            ) : searchQuery.trim() && (
+              <div className="absolute top-full mt-2 bg-gray-800 border border-gray-600 rounded shadow-lg p-2 min-w-[300px] z-50">
+                <div className="text-white text-center py-4">Tidak Tersedia</div>
+              </div>
+            )}
+          </>
         )}
         <FaSearch
           className="cursor-pointer hover:text-gray-500 transition"

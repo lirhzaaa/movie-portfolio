@@ -12,10 +12,15 @@ const MovieList = ({ genreId, index_ }) => {
   }, []);
 
   const getMovieByGenreId = () => {
-    GlobalApi.getMovieByGenreId(genreId).then((resp) => {
-      // console.log(resp.data.results)
-      setMovieList(resp.data.results);
-    });
+    if (genreId === 0) {
+      GlobalApi.getTrendingVideos.then((resp) => {
+        setMovieList(resp.data.results);
+      });
+    } else {
+      GlobalApi.getMovieByGenreId(genreId).then((resp) => {
+        setMovieList(resp.data.results);
+      });
+    }
   };
 
   const slideRight = (element) => {
